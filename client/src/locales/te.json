@@ -1,0 +1,23 @@
+{
+  "language": "భాష",
+  "select_language": "భాషను ఎంచుకోండి",
+  "profile": "ప్రొఫైల్",
+  "logout": "లాగ్ అవుట్",
+  "login": "లాగిన్",
+  "register": "రిజిస్టర్ చేయండి",
+  "add_product": "ఉత్పత్తిని జోడించండి",
+  "my_products": "నా ఉత్పత్తులు",
+  "my_orders": "నా ఆర్డర్లు",
+  "browse_products": "ఉత్పత్తులను బ్రౌజ్ చేయండి",
+  "orders": "ఆర్డర్లు",
+  "shop": "షాప్",
+  "products": "ఉత్పత్తులు",
+  "our_services": "మా సేవలు",
+  "contact": "సంప్రదించండి",
+  "get_started": "ప్రారంభించండి",
+  "welcome": "స్వాగతం, {{name}}!",
+  "select_option": "ప్రారంభించడానికి సైడ్బార్ నుండి ఒక ఎంపికను ఎంచుకోండి.",
+  "notifications": "నోటిఫికేషన్లు",
+  "no_notifications": "నోటిఫికేషన్లు లేవు.",
+  "back_to_dashboard": "డాష్‌బోర్డ్‌కు తిరిగి వెళ్ళండి"
+} 

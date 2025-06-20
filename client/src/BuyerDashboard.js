@@ -1,0 +1,107 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import BuyerProductBrowse from './BuyerProductBrowse';
+import BuyerOrderList from './BuyerOrderList';
+import BrowseProductsButton from './BrowseProductsButton';
+import BuyerOrdersButton from './BuyerOrdersButton';
+import LogoutButton from './LogoutButton';
+import { ReactComponent as ProfileIcon } from './assets/profile-icon.svg';
+
+function BuyerDashboard({ onLogout, user }) {
+  const { t } = useTranslation();
+  const [view, setView] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch('http://localhost:5000/api/notifications', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (data.success) setNotifications(data.notifications);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 20000); // Poll every 20s
+    return () => clearInterval(interval);
+  }, []);
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+
+  const handleShowNotifications = () => {
+    setShowNotifications(true);
+    // Mark all as read
+    notifications.filter(n => !n.is_read).forEach(async (n) => {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:5000/api/notifications/${n.id}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    });
+    setTimeout(fetchNotifications, 500); // Refresh after marking read
+  };
+
+  return (
+    <div className="eco-dashboard-layout">
+      {/* Sidebar */}
+      <aside className="eco-sidebar">
+        <div className="eco-sidebar-profile">
+          <Link to="/profile" className="profile-icon-link">
+            <ProfileIcon />
+          </Link>
+          <span className="eco-sidebar-username">{user?.name || t('profile')}</span>
+        </div>
+        <nav className="eco-sidebar-nav">
+          <button className={`eco-sidebar-btn${view === 'browse' ? ' active' : ''}`} onClick={() => setView('browse')}>
+            {t('browse_products')}
+          </button>
+          <button className={`eco-sidebar-btn${view === 'orders' ? ' active' : ''}`} onClick={() => setView('orders')}>
+            {t('my_orders')}
+          </button>
+          <button className={`eco-sidebar-btn${showNotifications ? ' active' : ''}`} onClick={handleShowNotifications} style={{position:'relative'}}>
+            {t('notifications')}
+            {unreadCount > 0 && <span style={{position:'absolute', right:12, top:8, background:'#388e3c', color:'#fff', borderRadius:'50%', fontSize:12, padding:'2px 7px'}}>{unreadCount}</span>}
+          </button>
+          <Link to="/profile" className="eco-sidebar-btn eco-sidebar-link">
+            {t('profile')}
+          </Link>
+          <button className="eco-sidebar-btn" onClick={onLogout}>{t('logout')}</button>
+        </nav>
+      </aside>
+      {/* Main Content */}
+      <main className="eco-dashboard-main">
+        <div style={{height: 32, marginBottom: 24}} />
+        {showNotifications ? (
+          <div className="eco-dashboard-content">
+            <h4>{t('notifications')}</h4>
+            {notifications.length === 0 && <div className="text-muted">{t('no_notifications') || 'No notifications.'}</div>}
+            <ul style={{listStyle:'none', padding:0}}>
+              {notifications.map(n => (
+                <li key={n.id} style={{background: n.is_read ? '#f1f8e9' : '#c8e6c9', borderRadius:8, marginBottom:8, padding:'10px 16px'}}>
+                  <span style={{fontWeight: n.is_read ? 400 : 700}}>{n.message}</span>
+                  <span style={{float:'right', fontSize:12, color:'#888'}}>{new Date(n.created_at).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+            <button className="btn btn-outline-secondary mt-3" onClick={() => setShowNotifications(false)}>{t('back_to_dashboard') || 'Back to Dashboard'}</button>
+          </div>
+        ) : view ? (
+          <div className="eco-dashboard-content">
+            {view === 'browse' && <BuyerProductBrowse onReset={() => setView(null)} />}
+            {view === 'orders' && <BuyerOrderList user={user} />}
+          </div>
+        ) : (
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '420px'}}>
+            <img src={require('./greenlogo.png')} alt="FarmConnect Logo" style={{width: '400px', height: '400px', objectFit: 'contain', filter: 'drop-shadow(0 4px 24px rgba(34,139,34,0.18))'}} />
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+export default BuyerDashboard; 

@@ -1,0 +1,23 @@
+{
+  "language": "Language",
+  "select_language": "Select Language",
+  "profile": "Profile",
+  "logout": "Logout",
+  "login": "Login",
+  "register": "Register",
+  "add_product": "Add Product",
+  "my_products": "My Products",
+  "my_orders": "My Orders",
+  "browse_products": "Browse Products",
+  "orders": "Orders",
+  "shop": "Shop",
+  "products": "Products",
+  "our_services": "Our Services",
+  "contact": "Contact",
+  "get_started": "Get Started",
+  "welcome": "Welcome, {{name}}!",
+  "select_option": "Select an option from the sidebar to get started.",
+  "notifications": "Notifications",
+  "no_notifications": "No notifications.",
+  "back_to_dashboard": "Back to Dashboard"
+} 

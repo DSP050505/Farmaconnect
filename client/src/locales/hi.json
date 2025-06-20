@@ -1,0 +1,20 @@
+{
+  "language": "भाषा",
+  "select_language": "भाषा चुनें",
+  "profile": "प्रोफ़ाइल",
+  "logout": "लॉगआउट",
+  "login": "लॉगिन",
+  "register": "रजिस्टर करें",
+  "add_product": "उत्पाद जोड़ें",
+  "my_products": "मेरे उत्पाद",
+  "my_orders": "मेरे ऑर्डर",
+  "browse_products": "उत्पाद ब्राउज़ करें",
+  "orders": "ऑर्डर",
+  "shop": "दुकान",
+  "products": "उत्पाद",
+  "our_services": "हमारी सेवाएँ",
+  "contact": "संपर्क करें",
+  "get_started": "शुरू करें",
+  "welcome": "स्वागत है, {{name}}!",
+  "select_option": "शुरू करने के लिए साइडबार से एक विकल्प चुनें।"
+} 
