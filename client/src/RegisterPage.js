@@ -8,7 +8,7 @@ function RegisterPage({ onRegister }) {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,7 +20,7 @@ function RegisterPage({ onRegister }) {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`${API_URL}/auth/register`, {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

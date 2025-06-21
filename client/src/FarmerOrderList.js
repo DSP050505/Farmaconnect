@@ -107,7 +107,7 @@ function FarmerOrderList({ user }) {
           <div className="col-md-6 mb-3" key={order.id}>
             <div className="card h-100 shadow-sm">
               {order.product_image && (
-                <img src={`${API_URL}/api/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
+                <img src={`${process.env.REACT_APP_API_URL}/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
               )}
               <div className="card-body">
                 <h5 className="card-title">{order.product_name}</h5>
