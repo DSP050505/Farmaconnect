@@ -78,6 +78,26 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
+app.get('/__database_check', async (req, res) => {
+    try {
+        const tables = await pool.query(
+            "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"
+        );
+        const tableNames = tables.rows.map(row => row.tablename);
+        res.status(200).json({ 
+            success: true, 
+            message: "Database connection successful. Tables found:", 
+            tables: tableNames 
+        });
+    } catch (err) {
+        res.status(500).json({ 
+            success: false, 
+            message: 'Database check failed.', 
+            error: err.message 
+        });
+    }
+});
+
 server.listen(PORT, () => {
   console.log(`Server and Socket.IO running on port ${PORT}`);
 }); 
