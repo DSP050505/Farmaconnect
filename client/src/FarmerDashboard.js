@@ -90,7 +90,7 @@ function FarmerDashboard({ onLogout, user }) {
       <header className="eco-mobile-header">
         <span className="eco-mobile-logo">FarmaConnect</span>
         <button className="eco-mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          ☰
+          {isMobileMenuOpen ? '✕' : '☰'}
         </button>
       </header>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './LandingPage.css';
@@ -8,6 +8,10 @@ import logoImg from './farma-logo.png';
 
 function LandingPage() {
   const { t } = useTranslation();
+  const [isNavCollapsed, setIsNavCollapsed] = useState(true);
+
+  const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
+
   return (
     <div className="landing-bg" style={{ backgroundImage: `url(${coverImg})` }}>
       <div className="landing-overlay">
@@ -17,16 +21,16 @@ function LandingPage() {
               <img src={logoImg} alt="logo" className="me-2" style={{ width: 60, height: 60, borderRadius: '50%' }} />
               Farma Connect
             </span>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button className="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded={!isNavCollapsed ? true : false} aria-label="Toggle navigation" onClick={handleNavCollapse}>
               <span className="navbar-toggler-icon"></span>
             </button>
-            <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse justify-content-end`} id="navbarNav">
               <ul className="navbar-nav mb-2 mb-lg-0">
-                <li className="nav-item"><Link className="nav-link" to="/services">{t('our_services')}</Link></li>
-                <li className="nav-item"><Link className="nav-link" to="/products">{t('products')}</Link></li>
-                <li className="nav-item"><Link className="nav-link" to="/shop">{t('shop')}</Link></li>
-                <li className="nav-item"><Link className="nav-link" to="/contact">{t('contact')}</Link></li>
-                <li className="nav-item"><Link className="btn btn-warning ms-lg-3 mt-2 mt-lg-0" to="/register">{t('get_started')}</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/services" onClick={handleNavCollapse}>{t('our_services')}</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/products" onClick={handleNavCollapse}>{t('products')}</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/shop" onClick={handleNavCollapse}>{t('shop')}</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/contact" onClick={handleNavCollapse}>{t('contact')}</Link></li>
+                <li className="nav-item"><Link className="btn btn-warning ms-lg-3 mt-2 mt-lg-0" to="/register" onClick={handleNavCollapse}>{t('get_started')}</Link></li>
               </ul>
             </div>
           </div>
