@@ -17,13 +17,16 @@ function LandingPage() {
               <img src={logoImg} alt="logo" className="me-2" style={{ width: 60, height: 60, borderRadius: '50%' }} />
               Farma Connect
             </span>
-            <div className="collapse navbar-collapse justify-content-end">
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
               <ul className="navbar-nav mb-2 mb-lg-0">
                 <li className="nav-item"><Link className="nav-link" to="/services">{t('our_services')}</Link></li>
                 <li className="nav-item"><Link className="nav-link" to="/products">{t('products')}</Link></li>
                 <li className="nav-item"><Link className="nav-link" to="/shop">{t('shop')}</Link></li>
                 <li className="nav-item"><Link className="nav-link" to="/contact">{t('contact')}</Link></li>
-                <li className="nav-item"><Link className="btn btn-warning ms-3" to="/register">{t('get_started')}</Link></li>
+                <li className="nav-item"><Link className="btn btn-warning ms-lg-3 mt-2 mt-lg-0" to="/register">{t('get_started')}</Link></li>
               </ul>
             </div>
           </div>

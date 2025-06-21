@@ -12,9 +12,10 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function BuyerDashboard({ onLogout, user }) {
   const { t } = useTranslation();
-  const [view, setView] = useState(null);
+  const [view, setView] = useState('browse'); // Default to browsing products
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -51,21 +52,28 @@ function BuyerDashboard({ onLogout, user }) {
     setTimeout(fetchNotifications, 500); // Refresh after marking read
   };
 
-  const markAsRead = async (id) => {
-    try {
-      await fetch(`${API_URL}/api/notifications/${id}/read`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
+  const handleMobileLinkClick = (newView) => {
+    setView(newView);
+    setIsMobileMenuOpen(false);
+  };
+  
+  const handleShowNotificationsMobile = () => {
+    handleShowNotifications();
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <div className="eco-dashboard-layout">
+      {/* Mobile Header */}
+      <header className="eco-mobile-header">
+        <span className="eco-mobile-logo">FarmaConnect</span>
+        <button className="eco-mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          ☰
+        </button>
+      </header>
+
       {/* Sidebar */}
-      <aside className="eco-sidebar">
+      <aside className={`eco-sidebar ${isMobileMenuOpen ? 'is-open' : ''}`}>
         <div className="eco-sidebar-profile">
           <Link to="/profile" className="profile-icon-link">
             <ProfileIcon />
@@ -73,22 +81,23 @@ function BuyerDashboard({ onLogout, user }) {
           <span className="eco-sidebar-username">{user?.name || t('profile')}</span>
         </div>
         <nav className="eco-sidebar-nav">
-          <button className={`eco-sidebar-btn${view === 'browse' ? ' active' : ''}`} onClick={() => setView('browse')}>
+          <button className={`eco-sidebar-btn${view === 'browse' ? ' active' : ''}`} onClick={() => handleMobileLinkClick('browse')}>
             {t('browse_products')}
           </button>
-          <button className={`eco-sidebar-btn${view === 'orders' ? ' active' : ''}`} onClick={() => setView('orders')}>
+          <button className={`eco-sidebar-btn${view === 'orders' ? ' active' : ''}`} onClick={() => handleMobileLinkClick('orders')}>
             {t('my_orders')}
           </button>
-          <button className={`eco-sidebar-btn${showNotifications ? ' active' : ''}`} onClick={handleShowNotifications} style={{position:'relative'}}>
+          <button className={`eco-sidebar-btn${showNotifications ? ' active' : ''}`} onClick={handleShowNotificationsMobile} style={{position:'relative'}}>
             {t('notifications')}
-            {unreadCount > 0 && <span style={{position:'absolute', right:12, top:8, background:'#388e3c', color:'#fff', borderRadius:'50%', fontSize:12, padding:'2px 7px'}}>{unreadCount}</span>}
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
           </button>
-          <Link to="/profile" className="eco-sidebar-btn eco-sidebar-link">
+          <Link to="/profile" className="eco-sidebar-btn eco-sidebar-link" onClick={() => setIsMobileMenuOpen(false)}>
             {t('profile')}
           </Link>
-          <button className="eco-sidebar-btn" onClick={onLogout}>{t('logout')}</button>
+          <button className="eco-sidebar-btn" onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}>{t('logout')}</button>
         </nav>
       </aside>
+
       {/* Main Content */}
       <main className="eco-dashboard-main">
         <div style={{height: 32, marginBottom: 24}} />
@@ -106,10 +115,13 @@ function BuyerDashboard({ onLogout, user }) {
             </ul>
             <button className="btn btn-outline-secondary mt-3" onClick={() => setShowNotifications(false)}>{t('back_to_dashboard') || 'Back to Dashboard'}</button>
           </div>
-        ) : view ? (
+        ) : view === 'browse' ? (
           <div className="eco-dashboard-content">
-            {view === 'browse' && <BuyerProductBrowse onReset={() => setView(null)} />}
-            {view === 'orders' && <BuyerOrderList user={user} />}
+            <BuyerProductBrowse user={user} />
+          </div>
+        ) : view === 'orders' ? (
+          <div className="eco-dashboard-content">
+            <BuyerOrderList user={user} />
           </div>
         ) : (
           <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '420px'}}>

@@ -13,6 +13,7 @@ function FarmerDashboard({ onLogout, user }) {
   const [view, setView] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -45,6 +46,16 @@ function FarmerDashboard({ onLogout, user }) {
     setTimeout(fetchNotifications, 500); // Refresh after marking read
   };
 
+  const handleMobileLinkClick = (newView) => {
+    setView(newView);
+    setIsMobileMenuOpen(false); // Close menu after selection
+  };
+  
+  const handleShowNotificationsMobile = () => {
+    handleShowNotifications();
+    setIsMobileMenuOpen(false);
+  };
+
   const markAsRead = async (id) => {
     try {
       await fetch(`${API_URL}/api/notifications/${id}/read`, {
@@ -75,8 +86,16 @@ function FarmerDashboard({ onLogout, user }) {
 
   return (
     <div className="eco-dashboard-layout">
+      {/* Mobile Header */}
+      <header className="eco-mobile-header">
+        <span className="eco-mobile-logo">FarmaConnect</span>
+        <button className="eco-mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          ☰
+        </button>
+      </header>
+
       {/* Sidebar */}
-      <aside className="eco-sidebar">
+      <aside className={`eco-sidebar ${isMobileMenuOpen ? 'is-open' : ''}`}>
         <div className="eco-sidebar-profile">
           <Link to="/profile" className="profile-icon-link">
             <ProfileIcon />
@@ -84,23 +103,23 @@ function FarmerDashboard({ onLogout, user }) {
           <span className="eco-sidebar-username">{user?.name || t('profile')}</span>
         </div>
         <nav className="eco-sidebar-nav">
-          <button className={`eco-sidebar-btn${view === 'add' ? ' active' : ''}`} onClick={() => setView('add')}>
+          <button className={`eco-sidebar-btn${view === 'add' ? ' active' : ''}`} onClick={() => handleMobileLinkClick('add')}>
             {t('add_product')}
           </button>
-          <button className={`eco-sidebar-btn${view === 'products' ? ' active' : ''}`} onClick={() => setView('products')}>
+          <button className={`eco-sidebar-btn${view === 'products' ? ' active' : ''}`} onClick={() => handleMobileLinkClick('products')}>
             {t('my_products')}
           </button>
-          <button className={`eco-sidebar-btn${view === 'orders' ? ' active' : ''}`} onClick={() => setView('orders')}>
+          <button className={`eco-sidebar-btn${view === 'orders' ? ' active' : ''}`} onClick={() => handleMobileLinkClick('orders')}>
             {t('my_orders')}
           </button>
-          <button className={`eco-sidebar-btn${showNotifications ? ' active' : ''}`} onClick={handleShowNotifications} style={{position:'relative'}}>
+          <button className={`eco-sidebar-btn${showNotifications ? ' active' : ''}`} onClick={handleShowNotificationsMobile} style={{position:'relative'}}>
             {t('notifications')}
-            {unreadCount > 0 && <span style={{position:'absolute', right:12, top:8, background:'#388e3c', color:'#fff', borderRadius:'50%', fontSize:12, padding:'2px 7px'}}>{unreadCount}</span>}
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
           </button>
-          <Link to="/profile" className="eco-sidebar-btn eco-sidebar-link">
+          <Link to="/profile" className="eco-sidebar-btn eco-sidebar-link" onClick={() => setIsMobileMenuOpen(false)}>
             {t('profile')}
           </Link>
-          <button className="eco-sidebar-btn" onClick={onLogout}>{t('logout')}</button>
+          <button className="eco-sidebar-btn" onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}>{t('logout')}</button>
         </nav>
       </aside>
       {/* Main Content */}
