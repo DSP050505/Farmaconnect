@@ -1,1 +1,6 @@
- 
+{
+  "buildCommand": "chmod +x build.sh && ./build.sh",
+  "installCommand": "echo 'Install handled in build script'",
+  "outputDirectory": "build",
+  "framework": "create-react-app"
+} 
