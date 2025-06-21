@@ -19,6 +19,8 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function CheckoutForm({ order, onPaymentSuccess, onClose }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -38,7 +40,7 @@ function CheckoutForm({ order, onPaymentSuccess, onClose }) {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:5000/api/payments/create-payment-intent', {
+      const response = await fetch(`${API_URL}/api/payments/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,11 +52,11 @@ function CheckoutForm({ order, onPaymentSuccess, onClose }) {
         }),
       });
 
-      const data = await response.json();
-      if (data.success) {
-        setClientSecret(data.clientSecret);
+      const { clientSecret, error: backendError } = await response.json();
+      if (clientSecret) {
+        setClientSecret(clientSecret);
       } else {
-        setError(data.message || 'Failed to create payment intent');
+        setError(backendError || 'Failed to create payment intent');
       }
     } catch (err) {
       setError('Network error while creating payment intent');
@@ -92,7 +94,7 @@ function CheckoutForm({ order, onPaymentSuccess, onClose }) {
     } else if (paymentIntent.status === 'succeeded') {
       // Confirm payment with backend
       try {
-        const response = await fetch('http://localhost:5000/api/payments/confirm-payment', {
+        const response = await fetch(`${API_URL}/api/payments/confirm-payment`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -3,6 +3,8 @@ import NegotiateModal from './NegotiateModal';
 import ChatModal from './ChatModal';
 import ChatButton from './ChatButton';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function FarmerOrderList({ user }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ function FarmerOrderList({ user }) {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/orders/farmer', {
+      const res = await fetch(`${API_URL}/api/orders/farmer`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -39,7 +41,7 @@ function FarmerOrderList({ user }) {
     setActionMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/orders/farmer-accept/${orderId}`, {
+      const res = await fetch(`${API_URL}/api/orders/farmer-accept/${orderId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -70,7 +72,7 @@ function FarmerOrderList({ user }) {
     setActionMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/orders/farmer-cancel/${orderId}`, {
+      const res = await fetch(`${API_URL}/api/orders/farmer-cancel/${orderId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -105,7 +107,7 @@ function FarmerOrderList({ user }) {
           <div className="col-md-6 mb-3" key={order.id}>
             <div className="card h-100 shadow-sm">
               {order.product_image && (
-                <img src={`http://localhost:5000/api/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
+                <img src={`${API_URL}/api/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
               )}
               <div className="card-body">
                 <h5 className="card-title">{order.product_name}</h5>

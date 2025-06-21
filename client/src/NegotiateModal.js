@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function NegotiateModal({ show, onClose, order, onNegotiated, role }) {
   const [price, setPrice] = useState(order?.negotiated_price || order?.price || '');
   const [loading, setLoading] = useState(false);
@@ -15,10 +17,11 @@ function NegotiateModal({ show, onClose, order, onNegotiated, role }) {
     setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const endpoint = role === 'buyer'
-        ? `http://localhost:5000/api/orders/buyer-negotiate/${order.id}`
-        : `http://localhost:5000/api/orders/negotiate/${order.id}`;
-      const res = await fetch(endpoint, {
+      const isBuyer = role === 'buyer';
+      const url = isBuyer
+        ? `${API_URL}/api/orders/buyer-negotiate/${order.id}`
+        : `${API_URL}/api/orders/negotiate/${order.id}`;
+      const res = await fetch(url, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

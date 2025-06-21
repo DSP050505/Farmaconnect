@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import './ChatModal.css';
 
-const SOCKET_SERVER_URL = "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const SOCKET_SERVER_URL = API_URL;
 
 function ChatModal({ show, onClose, order, currentUser, onMarkAsRead }) {
   const [socket, setSocket] = useState(null);
@@ -15,7 +16,7 @@ function ChatModal({ show, onClose, order, currentUser, onMarkAsRead }) {
     if (!order || !onMarkAsRead) return;
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/chat/read/${order.id}`, {
+      await fetch(`${API_URL}/api/chat/read/${order.id}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -27,7 +28,9 @@ function ChatModal({ show, onClose, order, currentUser, onMarkAsRead }) {
 
   useEffect(() => {
     if (show && order) {
-      const newSocket = io(SOCKET_SERVER_URL);
+      const newSocket = io(SOCKET_SERVER_URL, {
+        query: { token: localStorage.getItem('token') }
+      });
       setSocket(newSocket);
       newSocket.emit('join_room', order.id);
       
@@ -55,7 +58,7 @@ function ChatModal({ show, onClose, order, currentUser, onMarkAsRead }) {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/chat/${order.id}`, {
+      const res = await fetch(`${API_URL}/api/chat/${order.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -84,7 +87,7 @@ function ChatModal({ show, onClose, order, currentUser, onMarkAsRead }) {
 
     try {
       const token = localStorage.getItem('token');
-      await fetch('http://localhost:5000/api/chat', {
+      await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

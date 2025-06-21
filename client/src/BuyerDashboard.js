@@ -8,6 +8,8 @@ import BuyerOrdersButton from './BuyerOrdersButton';
 import LogoutButton from './LogoutButton';
 import { ReactComponent as ProfileIcon } from './assets/profile-icon.svg';
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function BuyerDashboard({ onLogout, user }) {
   const { t } = useTranslation();
   const [view, setView] = useState(null);
@@ -17,11 +19,15 @@ function BuyerDashboard({ onLogout, user }) {
   // Fetch notifications
   const fetchNotifications = async () => {
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/notifications', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (data.success) setNotifications(data.notifications);
+    try {
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) setNotifications(data.notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
   };
 
   useEffect(() => {
@@ -37,12 +43,23 @@ function BuyerDashboard({ onLogout, user }) {
     // Mark all as read
     notifications.filter(n => !n.is_read).forEach(async (n) => {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/notifications/${n.id}/read`, {
+      await fetch(`${API_URL}/api/notifications/${n.id}/read`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
     });
     setTimeout(fetchNotifications, 500); // Refresh after marking read
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      await fetch(`${API_URL}/api/notifications/${id}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
   };
 
   return (
