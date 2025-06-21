@@ -8,7 +8,7 @@ import LandingPage from './LandingPage';
 import ProfilePage from './ProfilePage';
 import ContactPage from './ContactPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+//trigerring redeploy 
 function App() {
   const [user, setUser] = useState(() => {
     const u = localStorage.getItem('user');
