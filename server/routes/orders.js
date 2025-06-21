@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 
 const router = express.Router();
+const JWT_SECRET = 'farmconnect_secret'; // Same secret as in auth routes
 
 // Middleware to check if user is a buyer
 function authenticateBuyer(req, res, next) {
@@ -12,7 +13,7 @@ function authenticateBuyer(req, res, next) {
   const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ success: false, message: 'Invalid token' });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.role !== 'buyer') return res.status(403).json({ success: false, message: 'Forbidden' });
     req.user = decoded;
     next();
@@ -28,7 +29,7 @@ function authenticateFarmer(req, res, next) {
   const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ success: false, message: 'Invalid token' });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.role !== 'farmer') return res.status(403).json({ success: false, message: 'Forbidden' });
     req.user = decoded;
     next();

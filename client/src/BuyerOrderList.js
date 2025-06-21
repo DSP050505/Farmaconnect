@@ -13,14 +13,14 @@ function BuyerOrderList({ user }) {
   const [paymentOrder, setPaymentOrder] = useState(null);
   const [chatOrder, setChatOrder] = useState(null);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const fetchOrders = async () => {
     setLoading(true);
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/orders/my`, {
+      const res = await fetch(`${API_URL}/api/orders/my`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -43,7 +43,7 @@ function BuyerOrderList({ user }) {
     setActionMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/orders/buyer-accept/${orderId}`, {
+      const res = await fetch(`${API_URL}/api/orders/buyer-accept/${orderId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -74,7 +74,7 @@ function BuyerOrderList({ user }) {
     setActionMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/orders/buyer-cancel/${orderId}`, {
+      const res = await fetch(`${API_URL}/api/orders/buyer-cancel/${orderId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -120,7 +120,7 @@ function BuyerOrderList({ user }) {
           <div className="col-md-6 mb-3" key={order.id}>
             <div className="card h-100 shadow-sm">
               {order.product_image && (
-                <img src={`${API_URL}/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
+                <img src={`${API_URL}/api/products/images/${order.product_image}`} alt={order.product_name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
               )}
               <div className="card-body">
                 <h5 className="card-title">{order.product_name}</h5>

@@ -3,8 +3,10 @@ const multer = require('multer');
 const pool = require('../db');
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
+const JWT_SECRET = 'farmconnect_secret'; // Same secret as in auth routes
 
 // Set up multer for image uploads
 const storage = multer.diskStorage({
@@ -28,9 +30,8 @@ function authenticateFarmer(req, res, next) {
   if (!authHeader) return res.status(401).json({ success: false, message: 'No token provided' });
   const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ success: false, message: 'Invalid token' });
-  const jwt = require('jsonwebtoken');
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.role !== 'farmer') return res.status(403).json({ success: false, message: 'Forbidden' });
     req.user = decoded;
     next();
@@ -85,6 +86,28 @@ router.get('/', async (req, res) => {
   try {
     const result = await pool.query(query, params);
     res.json({ success: true, products: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Delete a product
+router.delete('/:id', authenticateFarmer, async (req, res) => {
+  const productId = req.params.id;
+  try {
+    // Check if the product belongs to the authenticated farmer
+    const checkResult = await pool.query(
+      'SELECT * FROM products WHERE id = $1 AND farmer_id = $2',
+      [productId, req.user.id]
+    );
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Product not found or not authorized' });
+    }
+    
+    // Delete the product
+    await pool.query('DELETE FROM products WHERE id = $1', [productId]);
+    res.json({ success: true, message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

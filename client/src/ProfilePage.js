@@ -11,7 +11,7 @@ function ProfilePage({ user }) {
   const [success, setSuccess] = useState('');
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'en');
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     i18n.changeLanguage(language);
@@ -23,7 +23,7 @@ function ProfilePage({ user }) {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_URL}/profile`, {
+        const res = await fetch(`${API_URL}/api/profile`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -54,7 +54,7 @@ function ProfilePage({ user }) {
     setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/profile`, {
+      const res = await fetch(`${API_URL}/api/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ name: profile.name, pin_code: profile.pin_code }),
@@ -79,7 +79,7 @@ function ProfilePage({ user }) {
     setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/profile/change-password`, {
+      const res = await fetch(`${API_URL}/api/profile/change-password`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(password),

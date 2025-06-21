@@ -11,7 +11,7 @@ function BuyerProductBrowse() {
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const fetchProducts = async () => {
     if (!filters.crop_type.trim()) {
@@ -25,7 +25,7 @@ function BuyerProductBrowse() {
       const params = new URLSearchParams();
       if (filters.crop_type) params.append('crop_type', filters.crop_type);
       if (filters.pin_code) params.append('pin_code', filters.pin_code);
-      const res = await fetch(`${API_URL}/products?${params.toString()}`);
+      const res = await fetch(`${API_URL}/api/products?${params.toString()}`);
       const data = await res.json();
       if (!data.success) {
         setError(data.message || 'Failed to fetch products');
@@ -119,7 +119,7 @@ function BuyerProductBrowse() {
         <div className="eco-product-detail d-flex flex-wrap align-items-stretch" style={{background:'#e8f5e9', borderRadius:'1.5rem', boxShadow:'0 4px 24px rgba(34,139,34,0.10)', padding:'2.5rem 2rem', marginBottom:'2rem'}}>
           <div className="eco-product-detail-img" style={{flex:'0 0 340px', maxWidth:340, display:'flex', alignItems:'center', justifyContent:'center', background:'#fff', borderRadius:'1.2rem', boxShadow:'0 2px 12px rgba(34,139,34,0.08)', marginRight:'2.5rem', minHeight:320}}>
             {selectedProduct.image ? (
-              <img src={`${API_URL}/products/images/${selectedProduct.image}`} alt={selectedProduct.name} style={{maxWidth:'95%', maxHeight:300, borderRadius:'1.1rem'}} />
+              <img src={`${API_URL}/api/products/images/${selectedProduct.image}`} alt={selectedProduct.name} style={{maxWidth:'95%', maxHeight:300, borderRadius:'1.1rem'}} />
             ) : (
               <div className="text-muted">No image</div>
             )}
@@ -146,7 +146,7 @@ function BuyerProductBrowse() {
                 <div className="col-md-4 mb-4" key={product.id}>
                   <div className="card h-100 shadow-sm eco-product-card" style={{cursor:'pointer'}} onClick={() => handleProductClick(product)}>
                     {product.image && (
-                      <img src={`${API_URL}/products/images/${product.image}`} alt={product.name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
+                      <img src={`${API_URL}/api/products/images/${product.image}`} alt={product.name} className="card-img-top" style={{ maxHeight: 180, objectFit: 'cover' }} />
                     )}
                     <div className="card-body">
                       <h5 className="card-title">{product.name}</h5>
